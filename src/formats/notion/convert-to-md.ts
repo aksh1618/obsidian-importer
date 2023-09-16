@@ -40,6 +40,9 @@ export async function readToMarkdown(info: NotionResolverInfo, config: Conversio
 		}
 	}
 
+	if (config.removeNotionToc) {
+		removeNotionToc(body);
+	}
 	replaceNestedTags(body, 'strong');
 	replaceNestedTags(body, 'em');
 	fixNotionEmbeds(body);
@@ -213,6 +216,12 @@ function fixEquations(body: HTMLElement) {
 		if (!annotation) continue;
 		annotation.setText(`$${annotation.textContent}$`);
 		katex.replaceWith(annotation);
+	}
+}
+
+function removeNotionToc(body: HTMLElement) {
+	for (let embed of body.findAll('.table_of_contents')) {
+		embed.remove();
 	}
 }
 

@@ -88,6 +88,7 @@ export class NotionResolverInfo {
 }
 
 export interface ConversionOptions {
+	removeNotionToc: boolean;
 	autoDetectedLanguages: string[];
 	languageDetectionMinimumThreshold: number;
 }

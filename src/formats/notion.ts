@@ -11,11 +11,13 @@ import { parseFileInfo } from './notion/parse-info';
 
 export class NotionImporter extends FormatImporter {
 	parentsInSubfolders: boolean;
+	removeNotionToc: boolean;
 	autoDetectedLanguages: string[];
 	languageDetectionMinimumThreshold: number;
 
 	init() {
 		this.parentsInSubfolders = true;
+		this.removeNotionToc = true;
 		this.languageDetectionMinimumThreshold = 25;
 		this.autoDetectedLanguages = [
 			"html",
@@ -39,6 +41,12 @@ export class NotionImporter extends FormatImporter {
 				.setValue(this.parentsInSubfolders)
 				.onChange((value) => (this.parentsInSubfolders = value)));
 		new Setting(this.modal.contentEl)
+				.setName('Remove TOC')
+				.setDesc('Removes the Table of Contents. Currently it\'s converted to plain text, as there is no de-facto solution, so you can choose remove it')
+				.addToggle((toggle) => toggle
+					.setValue(this.removeNotionToc)
+					.onChange((value) => (this.removeNotionToc = value)));
+		new Setting(this.modal.contentEl)
 			// .setName('Minimum code-block length to trigger language auto-detectection')
 			.setName('Min length to auto detect codeblock language')
 			.setDesc('Notion html export does not preserve codeblocks\' language. So we can auto-detect it when the length exceeds this value')
@@ -57,6 +65,7 @@ export class NotionImporter extends FormatImporter {
 		const { 
 			vault,
 			parentsInSubfolders,
+			removeNotionToc,
 			autoDetectedLanguages,
 			languageDetectionMinimumThreshold,
 			files,
@@ -138,6 +147,7 @@ export class NotionImporter extends FormatImporter {
 					ctx.status(`Importing note ${fileInfo.title}`);
 
 					const conversionOptions = {
+						removeNotionToc,
 						autoDetectedLanguages,
 						languageDetectionMinimumThreshold,
 					};
