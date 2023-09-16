@@ -13,6 +13,7 @@
 		"allowSyntheticDefaultImports": true,
 		"strictNullChecks": true,
 		"strictBindCallApply": true,
+		"types": ["highlight.js"],
 		"lib": [
 			"DOM",
 			"ES5",
