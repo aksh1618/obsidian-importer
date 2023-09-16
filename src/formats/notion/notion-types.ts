@@ -86,3 +86,8 @@ export class NotionResolverInfo {
 			.join('/') + '/';
 	}
 }
+
+export interface ConversionOptions {
+	autoDetectedLanguages: string[];
+	languageDetectionMinimumThreshold: number;
+}

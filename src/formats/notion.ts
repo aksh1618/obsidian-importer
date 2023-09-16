@@ -54,7 +54,13 @@ export class NotionImporter extends FormatImporter {
 	}
 
 	async import(ctx: ImportContext): Promise<void> {
-		const { vault, parentsInSubfolders, autoDetectedLanguages, languageDetectionMinimumThreshold, files } = this;
+		const { 
+			vault,
+			parentsInSubfolders,
+			autoDetectedLanguages,
+			languageDetectionMinimumThreshold,
+			files,
+		} = this;
 		console.log("Auto detecting languages: " + autoDetectedLanguages.join('\n'));
 		if (files.length === 0) {
 			new Notice('Please pick at least one file to import.');
@@ -131,7 +137,11 @@ export class NotionImporter extends FormatImporter {
 
 					ctx.status(`Importing note ${fileInfo.title}`);
 
-					const markdownBody = await readToMarkdown(info, autoDetectedLanguages, languageDetectionMinimumThreshold, file);
+					const conversionOptions = {
+						autoDetectedLanguages,
+						languageDetectionMinimumThreshold,
+					};
+					const markdownBody = await readToMarkdown(info, conversionOptions, file);
 
 					const path = `${targetFolderPath}${info.getPathForFile(fileInfo)}${fileInfo.title}.md`;
 					await vault.create(path, markdownBody);

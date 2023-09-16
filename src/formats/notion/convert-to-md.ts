@@ -3,7 +3,7 @@ import { FrontMatterCache, htmlToMarkdown, moment } from 'obsidian';
 import { parseFilePath } from '../../filesystem';
 import { parseHTML, serializeFrontMatter } from '../../util';
 import { ZipEntryFile } from '../../zip';
-import { NotionLink, NotionProperty, NotionPropertyType, NotionResolverInfo, YamlProperty } from './notion-types';
+import { ConversionOptions, NotionLink, NotionProperty, NotionPropertyType, NotionResolverInfo, YamlProperty } from './notion-types';
 import {
 	hoistChildren,
 	escapeHashtags,
@@ -13,7 +13,7 @@ import {
 	stripParentDirectories,
 } from './notion-utils';
 
-export async function readToMarkdown(info: NotionResolverInfo, autoDetectedLanguages: string[], languageDetectionMinimumThreshold: number, file: ZipEntryFile): Promise<string> {
+export async function readToMarkdown(info: NotionResolverInfo, config: ConversionOptions, file: ZipEntryFile): Promise<string> {
 	const text = await file.readText();
 
 	const dom = parseHTML(text);
@@ -45,7 +45,7 @@ export async function readToMarkdown(info: NotionResolverInfo, autoDetectedLangu
 	fixNotionEmbeds(body);
 	stripLinkFormatting(body);
 	encodeNewlinesToBr(body);
-	autoDetectCodeBlocksLanguage(body, autoDetectedLanguages, languageDetectionMinimumThreshold);
+	autoDetectCodeBlocksLanguage(body, config.autoDetectedLanguages, config.languageDetectionMinimumThreshold);
 	fixNotionDates(body);
 	fixEquations(body);
 	// Some annoying elements Notion throws in as wrappers, which mess up .md
