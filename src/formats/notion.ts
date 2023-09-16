@@ -20,17 +20,17 @@ export class NotionImporter extends FormatImporter {
 		this.removeNotionToc = true;
 		this.languageDetectionMinimumThreshold = 25;
 		this.autoDetectedLanguages = [
-			"html",
-			"typescript",
-			"javascript",
-			"python",
-			"c",
-			"c++",
-			"rust",
-			"kotlin",
-			"sh",
-			"sql",
-			"plaintext",
+			'html',
+			'typescript',
+			'javascript',
+			'python',
+			'c',
+			'c++',
+			'rust',
+			'kotlin',
+			'sh',
+			'sql',
+			'plaintext',
 		];
 		this.addFileChooserSetting('Exported Notion', ['zip']);
 		this.addOutputLocationSetting('Notion');
@@ -41,11 +41,11 @@ export class NotionImporter extends FormatImporter {
 				.setValue(this.parentsInSubfolders)
 				.onChange((value) => (this.parentsInSubfolders = value)));
 		new Setting(this.modal.contentEl)
-				.setName('Remove TOC')
-				.setDesc('Removes the Table of Contents. Currently it\'s converted to plain text, as there is no de-facto solution, so you can choose remove it')
-				.addToggle((toggle) => toggle
-					.setValue(this.removeNotionToc)
-					.onChange((value) => (this.removeNotionToc = value)));
+			.setName('Remove TOC')
+			.setDesc('Removes the Table of Contents. Currently it\'s converted to plain text, as there is no de-facto solution, so you can choose remove it')
+			.addToggle((toggle) => toggle
+				.setValue(this.removeNotionToc)
+				.onChange((value) => (this.removeNotionToc = value)));
 		new Setting(this.modal.contentEl)
 			// .setName('Minimum code-block length to trigger language auto-detectection')
 			.setName('Min length to auto detect codeblock language')
@@ -70,7 +70,7 @@ export class NotionImporter extends FormatImporter {
 			languageDetectionMinimumThreshold,
 			files,
 		} = this;
-		console.log("Auto detecting languages: " + autoDetectedLanguages.join('\n'));
+		console.log('Auto detecting languages: ' + autoDetectedLanguages.join('\n'));
 		if (files.length === 0) {
 			new Notice('Please pick at least one file to import.');
 			return;

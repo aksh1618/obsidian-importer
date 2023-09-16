@@ -314,13 +314,14 @@ function autoDetectCodeBlocksLanguage(body: HTMLElement, autoDetectedLanguages: 
 		if (block.parentElement?.className != 'code') continue;
 		const codeString = block.innerHTML;
 		if (codeString.length < languageDetectionMinimumThreshold) continue;
-		const codeStringRep = codeString.substring(0, Math.min(codeString.length - 1, 100)) + " ...";
+		const codeStringRep = codeString.substring(0, Math.min(codeString.length - 1, 100)) + ' ...';
 		const detectedLanguage = detectLanguage(codeString, autoDetectedLanguages);
 		if (detectedLanguage) {
-			console.log("Tagging language " + detectedLanguage + " for " + codeStringRep);
+			console.log('Tagging language ' + detectedLanguage + ' for ' + codeStringRep);
 			block.addClass('language-' + detectedLanguage);
-		} else {
-			console.log("Failed to detect language for " + codeStringRep);
+		}
+		else {
+			console.log('Failed to detect language for ' + codeStringRep);
 		}
 		/*else if (inlineCodeLanguageDetectionEnabled) {
 			const detectedLanguage = detectLanguage(codeString, autoDetectedLanguages);
@@ -333,7 +334,8 @@ function detectLanguage(code: string, autoDetectedLanguages: string[]): string |
 	// Use Highlight.js to auto-detect the language
 	if(autoDetectedLanguages.length != 0) {
 		return hljs.highlightAuto(code, autoDetectedLanguages).language;
-	} else {
+	}
+	else {
 		return hljs.highlightAuto(code).language;
 	}
 }
