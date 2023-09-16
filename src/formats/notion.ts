@@ -11,9 +11,25 @@ import { parseFileInfo } from './notion/parse-info';
 
 export class NotionImporter extends FormatImporter {
 	parentsInSubfolders: boolean;
+	autoDetectedLanguages: string[];
+	languageDetectionMinimumThreshold: number;
 
 	init() {
 		this.parentsInSubfolders = true;
+		this.languageDetectionMinimumThreshold = 25;
+		this.autoDetectedLanguages = [
+			"html",
+			"typescript",
+			"javascript",
+			"python",
+			"c",
+			"c++",
+			"rust",
+			"kotlin",
+			"sh",
+			"sql",
+			"plaintext",
+		];
 		this.addFileChooserSetting('Exported Notion', ['zip']);
 		this.addOutputLocationSetting('Notion');
 		new Setting(this.modal.contentEl)
@@ -22,10 +38,24 @@ export class NotionImporter extends FormatImporter {
 			.addToggle((toggle) => toggle
 				.setValue(this.parentsInSubfolders)
 				.onChange((value) => (this.parentsInSubfolders = value)));
+		new Setting(this.modal.contentEl)
+			// .setName('Minimum code-block length to trigger language auto-detectection')
+			.setName('Min length to auto detect codeblock language')
+			.setDesc('Notion html export does not preserve codeblocks\' language. So we can auto-detect it when the length exceeds this value')
+			.addText((text) => text
+				.setValue(this.languageDetectionMinimumThreshold.toString())
+				.onChange((value) => value ? this.languageDetectionMinimumThreshold = +value : this.languageDetectionMinimumThreshold));
+		new Setting(this.modal.contentEl)
+			.setName('Languages to auto detect')
+			.setDesc('Specify each language in a new line. Uses highlight.js to auto-detect language. Notion html export does not preserve codeblocks\' language')
+			.addTextArea((textArea) => textArea
+				.setValue(this.autoDetectedLanguages.join('\n'))
+				.onChange((value) => value ? this.autoDetectedLanguages = value.split('\n') : []));
 	}
 
 	async import(ctx: ImportContext): Promise<void> {
-		const { vault, parentsInSubfolders, files } = this;
+		const { vault, parentsInSubfolders, autoDetectedLanguages, languageDetectionMinimumThreshold, files } = this;
+		console.log("Auto detecting languages: " + autoDetectedLanguages.join('\n'));
 		if (files.length === 0) {
 			new Notice('Please pick at least one file to import.');
 			return;
@@ -101,7 +131,7 @@ export class NotionImporter extends FormatImporter {
 
 					ctx.status(`Importing note ${fileInfo.title}`);
 
-					const markdownBody = await readToMarkdown(info, file);
+					const markdownBody = await readToMarkdown(info, autoDetectedLanguages, languageDetectionMinimumThreshold, file);
 
 					const path = `${targetFolderPath}${info.getPathForFile(fileInfo)}${fileInfo.title}.md`;
 					await vault.create(path, markdownBody);

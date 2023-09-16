@@ -1,3 +1,4 @@
+import hljs from 'highlight.js';
 import { FrontMatterCache, htmlToMarkdown, moment } from 'obsidian';
 import { parseFilePath } from '../../filesystem';
 import { parseHTML, serializeFrontMatter } from '../../util';
@@ -12,7 +13,7 @@ import {
 	stripParentDirectories,
 } from './notion-utils';
 
-export async function readToMarkdown(info: NotionResolverInfo, file: ZipEntryFile): Promise<string> {
+export async function readToMarkdown(info: NotionResolverInfo, autoDetectedLanguages: string[], languageDetectionMinimumThreshold: number, file: ZipEntryFile): Promise<string> {
 	const text = await file.readText();
 
 	const dom = parseHTML(text);
@@ -44,6 +45,7 @@ export async function readToMarkdown(info: NotionResolverInfo, file: ZipEntryFil
 	fixNotionEmbeds(body);
 	stripLinkFormatting(body);
 	encodeNewlinesToBr(body);
+	autoDetectCodeBlocksLanguage(body, autoDetectedLanguages, languageDetectionMinimumThreshold);
 	fixNotionDates(body);
 	fixEquations(body);
 	// Some annoying elements Notion throws in as wrappers, which mess up .md
@@ -295,6 +297,35 @@ function encodeNewlinesToBr(body: HTMLElement) {
 	// Restore newlines inside codeblocks
 	for (const block of body.findAll('code')) {
 		block.innerHTML = block.innerHTML.replace(/##placeholder##/g, '\n');
+	}
+}
+
+function autoDetectCodeBlocksLanguage(body: HTMLElement, autoDetectedLanguages: string[], languageDetectionMinimumThreshold: number) {
+	for (const block of body.findAll('code')) {
+		if (block.parentElement?.className != 'code') continue;
+		const codeString = block.innerHTML;
+		if (codeString.length < languageDetectionMinimumThreshold) continue;
+		const codeStringRep = codeString.substring(0, Math.min(codeString.length - 1, 100)) + " ...";
+		const detectedLanguage = detectLanguage(codeString, autoDetectedLanguages);
+		if (detectedLanguage) {
+			console.log("Tagging language " + detectedLanguage + " for " + codeStringRep);
+			block.addClass('language-' + detectedLanguage);
+		} else {
+			console.log("Failed to detect language for " + codeStringRep);
+		}
+		/*else if (inlineCodeLanguageDetectionEnabled) {
+			const detectedLanguage = detectLanguage(codeString, autoDetectedLanguages);
+			block.innerHTML = '{%s}'.format(detectedLanguage) + codeString;
+		}*/
+	}
+}
+
+function detectLanguage(code: string, autoDetectedLanguages: string[]): string | undefined {
+	// Use Highlight.js to auto-detect the language
+	if(autoDetectedLanguages.length != 0) {
+		return hljs.highlightAuto(code, autoDetectedLanguages).language;
+	} else {
+		return hljs.highlightAuto(code).language;
 	}
 }
 
