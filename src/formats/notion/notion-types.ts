@@ -91,4 +91,5 @@ export interface ConversionOptions {
 	removeNotionToc: boolean;
 	autoDetectedLanguages: string[];
 	languageDetectionMinimumThreshold: number;
+	preserveIconAsProperty: string;
 }

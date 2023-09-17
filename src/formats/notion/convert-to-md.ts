@@ -40,6 +40,10 @@ export async function readToMarkdown(info: NotionResolverInfo, config: Conversio
 		}
 	}
 
+	if (config.preserveIconAsProperty) {
+		frontMatter[config.preserveIconAsProperty] = dom.find('.page-header-icon > span[class=icon]').innerText;
+	}
+
 	if (config.removeNotionToc) {
 		removeNotionToc(body);
 	}

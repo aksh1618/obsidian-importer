@@ -14,6 +14,7 @@ export class NotionImporter extends FormatImporter {
 	removeNotionToc: boolean;
 	autoDetectedLanguages: string[];
 	languageDetectionMinimumThreshold: number;
+	preserveIconAsProperty: string;
 
 	init() {
 		this.parentsInSubfolders = true;
@@ -32,6 +33,8 @@ export class NotionImporter extends FormatImporter {
 			'sql',
 			'plaintext',
 		];
+		this.preserveIconAsProperty = 'sticker';
+
 		this.addFileChooserSetting('Exported Notion', ['zip']);
 		this.addOutputLocationSetting('Notion');
 		new Setting(this.modal.contentEl)
@@ -59,6 +62,12 @@ export class NotionImporter extends FormatImporter {
 			.addTextArea((textArea) => textArea
 				.setValue(this.autoDetectedLanguages.join('\n'))
 				.onChange((value) => value ? this.autoDetectedLanguages = value.split('\n') : []));
+		new Setting(this.modal.contentEl)
+			.setName('Property name for icon')
+			.setDesc('Icons can be preserved as a property with the given name. Leaving this empty will skip adding any such property.')
+			.addText((text) => text
+				.setValue(this.preserveIconAsProperty)
+				.onChange((value) => value ? this.preserveIconAsProperty = value : ''));
 	}
 
 	async import(ctx: ImportContext): Promise<void> {
@@ -68,6 +77,7 @@ export class NotionImporter extends FormatImporter {
 			removeNotionToc,
 			autoDetectedLanguages,
 			languageDetectionMinimumThreshold,
+			preserveIconAsProperty,
 			files,
 		} = this;
 		console.log('Auto detecting languages: ' + autoDetectedLanguages.join('\n'));
@@ -150,6 +160,7 @@ export class NotionImporter extends FormatImporter {
 						removeNotionToc,
 						autoDetectedLanguages,
 						languageDetectionMinimumThreshold,
+						preserveIconAsProperty,
 					};
 					const markdownBody = await readToMarkdown(info, conversionOptions, file);
 
