@@ -302,14 +302,12 @@ function replaceTableOfContents(body: HTMLElement) {
 }
 
 function encodeNewlinesToBr(body: HTMLElement) {
-	// Since <br /> is ignored in codeblocks, we preserve newlines inside codeblocks with a placeholder.
-	for (const block of body.findAll('code')) {
-		block.innerHTML = block.innerHTML.replace(/\n/g, '##placeholder##');
-	}
 	body.innerHTML = body.innerHTML.replace(/\n/g, '<br />');
-	// Restore newlines inside codeblocks
+	// Since <br /> is ignored in codeblocks, we replace with newlines
 	for (const block of body.findAll('code')) {
-		block.innerHTML = block.innerHTML.replace(/##placeholder##/g, '\n');
+		for (const br of block.findAll('br')) {
+			br.replaceWith('\n');
+		}
 	}
 }
 
