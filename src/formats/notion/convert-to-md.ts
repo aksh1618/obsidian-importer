@@ -41,7 +41,10 @@ export async function readToMarkdown(info: NotionResolverInfo, config: Conversio
 	}
 
 	if (config.preserveIconAsProperty) {
-		frontMatter[config.preserveIconAsProperty] = dom.find('.page-header-icon > span[class=icon]').innerText;
+		const icon = dom.find('.page-header-icon > span[class=icon]');
+		if (icon) {
+			frontMatter[config.preserveIconAsProperty] = icon.innerText;
+		}
 	}
 
 	if (config.removeNotionToc) {
