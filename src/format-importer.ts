@@ -12,6 +12,7 @@ export abstract class FormatImporter {
 
 	files: PickedFile[] = [];
 	outputLocation: string = '';
+	notAvailable: boolean = false;
 
 	constructor(app: App, modal: ImporterModal) {
 		this.app = app;
@@ -146,7 +147,9 @@ export abstract class FormatImporter {
 	 * Recursively create folders, if they don't exist.
 	 */
 	async createFolders(path: string): Promise<TFolder> {
-		let normalizedPath = normalizePath(path);
+		// can't create folders starting with a dot
+		const sanitizedPath = path.split('/').map(segment => segment.replace(/^\.+/, '')).join('/');
+		let normalizedPath = normalizePath(sanitizedPath);
 		let folder = this.vault.getAbstractFileByPathInsensitive(normalizedPath);
 		if (folder && folder instanceof TFolder) {
 			return folder;
