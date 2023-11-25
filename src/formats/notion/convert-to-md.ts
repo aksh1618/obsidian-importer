@@ -88,7 +88,7 @@ export async function readToMarkdown(info: NotionResolverInfo, config: Conversio
 	
 
 	let markdownBody = htmlToMarkdown(htmlString);
-	if (info.singleLineBreaks) {
+	if (config.singleLineBreaks) {
 		// Making sure that any blockquote is preceded by an empty line (otherwise messes up formatting with consecutive blockquotes / callouts)
 		markdownBody = markdownBody.replace(/\n\n(?!>)/g, '\n');
 	}

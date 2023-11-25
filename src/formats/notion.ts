@@ -86,6 +86,7 @@ export class NotionImporter extends FormatImporter {
 		const { 
 			vault,
 			parentsInSubfolders,
+			singleLineBreaks,
 			removeNotionToc,
 			autoDetectedLanguages,
 			languageDetectionMinimumThreshold,
@@ -109,7 +110,7 @@ export class NotionImporter extends FormatImporter {
 		// As a convention, all parent folders should end with "/" in this importer.
 		if (!targetFolderPath?.endsWith('/')) targetFolderPath += '/';
 
-		const info = new NotionResolverInfo(vault.getConfig('attachmentFolderPath') ?? '', this.singleLineBreaks);
+		const info = new NotionResolverInfo(vault.getConfig('attachmentFolderPath') ?? '');
 
 		// loads in only path & title information to objects
 		ctx.status('Looking for files to import');
@@ -169,6 +170,7 @@ export class NotionImporter extends FormatImporter {
 					ctx.status(`Importing note ${fileInfo.title}`);
 
 					const conversionOptions = {
+						singleLineBreaks,
 						removeNotionToc,
 						autoDetectedLanguages,
 						languageDetectionMinimumThreshold,

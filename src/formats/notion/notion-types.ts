@@ -68,11 +68,9 @@ export class NotionResolverInfo {
 	idsToFileInfo: Record<string, NotionFileInfo> = {};
 	pathsToAttachmentInfo: Record<string, NotionAttachmentInfo> = {};
 	attachmentPath: string;
-	singleLineBreaks: boolean;
 
-	constructor(attachmentPath: string, singleLineBreaks: boolean) {
+	constructor(attachmentPath: string) {
 		this.attachmentPath = attachmentPath;
-		this.singleLineBreaks = singleLineBreaks;
 	}
 
 	getPathForFile(fileInfo: NotionFileInfo | NotionAttachmentInfo) {
@@ -92,6 +90,7 @@ export class NotionResolverInfo {
 }
 
 export interface ConversionOptions {
+	singleLineBreaks: boolean;
 	removeNotionToc: boolean;
 	autoDetectedLanguages: string[];
 	languageDetectionMinimumThreshold: number;
